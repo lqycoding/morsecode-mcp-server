@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>摩尔斯电码转换器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 100px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>摩尔斯电码转换器</h1>
+        <div class="input-group">
+            <label for="input-text">输入文本或摩尔斯电码：</label>
+            <textarea id="input-text" placeholder="在这里输入..."></textarea>
+        </div>
+        <div>
+            <button onclick="encode()">转换为摩尔斯电码</button>
+            <button onclick="decode()">转换为文本</button>
+        </div>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        async function encode() {
+            const text = document.getElementById('input-text').value;
+            try {
+                const response = await fetch('/encode', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text })
+                });
+                const data = await response.json();
+                document.getElementById('result').textContent = data.morse_code || data.error;
+            } catch (error) {
+                document.getElementById('result').textContent = '转换出错，请重试';
+            }
+        }
+
+        async function decode() {
+            const morse_code = document.getElementById('input-text').value;
+            try {
+                const response = await fetch('/decode', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ morse_code })
+                });
+                const data = await response.json();
+                document.getElementById('result').textContent = data.text || data.error;
+            } catch (error) {
+                document.getElementById('result').textContent = '转换出错，请重试';
+            }
+        }
+    </script>
+</body>
+</html>
